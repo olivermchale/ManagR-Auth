@@ -7,7 +7,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.Text;
+using System.Threading.Tasks;
 using UserAuthentication.Data;
 
 namespace UserAuthentication
@@ -39,25 +41,55 @@ namespace UserAuthentication
                 options.Password.RequireLowercase = false;
             });
 
+            services.AddScoped<IIDAuthService, IDAuthService>();
+
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<UserAuthenticationDb>();
             builder.AddRoleValidator<RoleValidator<IdentityRole>>();
             builder.AddRoleManager<RoleManager<IdentityRole>>();
             builder.AddSignInManager<SignInManager<IdentityUser>>();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(config =>
-                {
-                    var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
-                    var key = new SymmetricSecurityKey(secretBytes);
-                    config.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = Constants.Issuer,
-                        ValidAudience = Constants.Audience,
-                        IssuerSigningKey = key
-                    };
-                });
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(config =>
+            {
+                var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
+                var key = new SymmetricSecurityKey(secretBytes);
 
+                config.Events = new JwtBearerEvents()
+                {
+                    OnMessageReceived = context =>
+                    {
+                        if (context.Request.Query.ContainsKey("access_token"))
+                        {
+                            context.Token = context.Request.Query["access_token"];
+                        }
+
+                        return Task.CompletedTask;
+                    }
+                };
+
+                config.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ClockSkew = TimeSpan.Zero,
+                    ValidIssuer = Constants.Issuer,
+                    ValidAudience = Constants.Audience,
+                    IssuerSigningKey = key
+                };
+            });
+
+            services.AddIdentityServer()
+                .AddInMemoryApiResources(IdentityServerConfig.GetApis())
+                .AddInMemoryClients(IdentityServerConfig.GetClients())
+                .AddAspNetIdentity<IdentityUser>()
+                .AddDeveloperSigningCredential();
+
+            services.AddHttpClient();
+            
             services.AddControllers();
         }
 
@@ -74,6 +106,8 @@ namespace UserAuthentication
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseIdentityServer();
 
             app.UseEndpoints(endpoints =>
             {

@@ -15,10 +15,12 @@ namespace UserAuthentication.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        public HomeController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+        private readonly IIDAuthService _idAuthService;
+        public HomeController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IIDAuthService idAuthService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _idAuthService = idAuthService;
         }
         public IActionResult SomeThing()
         {
@@ -35,35 +37,13 @@ namespace UserAuthentication.Controllers
         public async Task<IActionResult> Login([FromBody] LoginVm loginInfo)
         {
             var user = await _userManager.FindByNameAsync(loginInfo.Username);
-            
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, "idx"),
-                new Claim("ManagR", "Cookie")
-            };
-
-            var secretBytes = Encoding.UTF8.GetBytes(Constants.Secret);
-            var key = new SymmetricSecurityKey(secretBytes);
-            var algorithm = SecurityAlgorithms.HmacSha256;
-
-            var signingCredentails = new SigningCredentials(key, algorithm);
-            
-            var token = new JwtSecurityToken(
-                Constants.Issuer,
-                Constants.Audience,
-                claims,
-                notBefore: DateTime.Now,
-                expires: DateTime.Now.AddHours(24),
-                signingCredentails
-                );
-
-            var tokenJson = new JwtSecurityTokenHandler().WriteToken(token);
             if(user != null)
             {
                var result =  await _signInManager.CheckPasswordSignInAsync(user, loginInfo.Password, false);
                if (result.Succeeded)
                 {
-                    return Ok(new { access_token = tokenJson });
+                    var token = await _idAuthService.Authenticate(loginInfo);
+                    return Ok(new { access_token = token });
                 }
             }
             return NotFound();
