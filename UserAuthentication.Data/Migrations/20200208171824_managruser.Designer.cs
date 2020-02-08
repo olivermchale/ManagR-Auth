@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UserAuthentication.Data;
 
 namespace UserAuthentication.Data.Migrations
 {
     [DbContext(typeof(UserAuthenticationDb))]
-    partial class UserAuthenticationDbModelSnapshot : ModelSnapshot
+    [Migration("20200208171824_managruser")]
+    partial class managruser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

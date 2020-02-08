@@ -28,9 +28,10 @@ namespace UserAuthentication
 
                 ClientId = "some_client_id",
                 ClientSecret = "some_secret",
-                Scope = "ApiOne",
+                Scope = "ManagR",
                 UserName = loginInfo.Username,
                 Password = loginInfo.Password
+                
             });
 
             return tokenResponse.AccessToken;

@@ -13,10 +13,10 @@ namespace UserAuthentication.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ManagRUser> _userManager;
+        private readonly SignInManager<ManagRUser> _signInManager;
         private readonly IIDAuthService _idAuthService;
-        public HomeController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IIDAuthService idAuthService)
+        public HomeController(UserManager<ManagRUser> userManager, SignInManager<ManagRUser> signInManager, IIDAuthService idAuthService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
@@ -52,10 +52,11 @@ namespace UserAuthentication.Controllers
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] RegisterVm registerInfo)
         {
-            var user = new IdentityUser
+            var user = new ManagRUser
             {
                 UserName = registerInfo.Username,
-                Email = "",
+                Role = registerInfo.Role,
+                Email = registerInfo.Email,
             };
 
             var result = await _userManager.CreateAsync(user, registerInfo.Password);

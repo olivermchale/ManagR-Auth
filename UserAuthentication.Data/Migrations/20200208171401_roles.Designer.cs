@@ -10,8 +10,8 @@ using UserAuthentication.Data;
 namespace UserAuthentication.Data.Migrations
 {
     [DbContext(typeof(UserAuthenticationDb))]
-    [Migration("20200206132714_init")]
-    partial class init
+    [Migration("20200208171401_roles")]
+    partial class roles
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

@@ -1,3 +1,4 @@
+using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using UserAuthentication.Data;
+using UserAuthentication.Models.ViewModels;
 
 namespace UserAuthentication
 {
@@ -32,7 +34,7 @@ namespace UserAuthentication
             {
                 options.UseSqlServer(_configuration.GetConnectionString("UserAuthenticationDb"));
             });
-            IdentityBuilder builder = services.AddIdentityCore<IdentityUser>(options =>
+            IdentityBuilder builder = services.AddIdentityCore<ManagRUser>(options =>
             {
                 options.Password.RequireDigit = false;
                 options.Password.RequiredLength = 3;
@@ -42,12 +44,13 @@ namespace UserAuthentication
             });
 
             services.AddScoped<IIDAuthService, IDAuthService>();
+            services.AddTransient<IProfileService, ManagRProfileService>();
 
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<UserAuthenticationDb>();
             builder.AddRoleValidator<RoleValidator<IdentityRole>>();
             builder.AddRoleManager<RoleManager<IdentityRole>>();
-            builder.AddSignInManager<SignInManager<IdentityUser>>();
+            builder.AddSignInManager<SignInManager<ManagRUser>>();
 
             services.AddAuthentication(options =>
             {
@@ -85,7 +88,8 @@ namespace UserAuthentication
             services.AddIdentityServer()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryClients(IdentityServerConfig.GetClients())
-                .AddAspNetIdentity<IdentityUser>()
+                .AddAspNetIdentity<ManagRUser>()
+                .AddProfileService<ManagRProfileService>()
                 .AddDeveloperSigningCredential();
 
             services.AddHttpClient();

@@ -12,8 +12,7 @@ namespace UserAuthentication
     {
         public static IEnumerable<ApiResource> GetApis() =>
             new List<ApiResource> {
-                new ApiResource("ApiOne"),
-                new ApiResource("ApiTwo", new string[] { "rc.api.garndma" }),
+                new ApiResource("ManagR"),
             };
 
         public static IEnumerable<Client> GetClients() =>
@@ -27,7 +26,7 @@ namespace UserAuthentication
                     AllowedGrantTypes = new List<string>() { GrantType.ResourceOwnerPassword, GrantType.ClientCredentials },
                     AllowedScopes =
                     {
-                        "ApiOne"
+                        "ManagR"
                     }
                 }
             };
