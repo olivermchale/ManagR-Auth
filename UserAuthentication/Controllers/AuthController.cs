@@ -11,12 +11,12 @@ using UserAuthentication.Models.ViewModels;
 
 namespace UserAuthentication.Controllers
 {
-    public class HomeController : Controller
+    public class AuthController : Controller
     {
         private readonly UserManager<ManagRUser> _userManager;
         private readonly SignInManager<ManagRUser> _signInManager;
         private readonly IIDAuthService _idAuthService;
-        public HomeController(UserManager<ManagRUser> userManager, SignInManager<ManagRUser> signInManager, IIDAuthService idAuthService)
+        public AuthController(UserManager<ManagRUser> userManager, SignInManager<ManagRUser> signInManager, IIDAuthService idAuthService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
