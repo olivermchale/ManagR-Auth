@@ -57,6 +57,8 @@ namespace UserAuthentication.Controllers
                 UserName = registerInfo.Username,
                 Role = registerInfo.Role,
                 Email = registerInfo.Email,
+                FirstName = registerInfo.FirstName,
+                LastName = registerInfo.LastName
             };
 
             var result = await _userManager.CreateAsync(user, registerInfo.Password);

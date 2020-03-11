@@ -10,8 +10,8 @@ using UserAuthentication.Data;
 namespace UserAuthentication.Data.Migrations
 {
     [DbContext(typeof(UserAuthenticationDb))]
-    [Migration("20200208171824_managruser")]
-    partial class managruser
+    [Migration("20200311115349_reinit")]
+    partial class reinit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -193,9 +193,6 @@ namespace UserAuthentication.Data.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
-
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");

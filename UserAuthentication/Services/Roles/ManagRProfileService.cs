@@ -32,8 +32,10 @@ namespace UserAuthentication
             var claims = principal.Claims.ToList();
             claims = claims.Where(claim => context.RequestedClaimTypes.Contains(claim.Type)).ToList();
             claims.Add(new Claim(JwtClaimTypes.GivenName, user.UserName));
+            claims.Add(new Claim(JwtClaimTypes.Name, user.FirstName));
+            claims.Add(new Claim(JwtClaimTypes.FamilyName, user.LastName));
 
-            if(user.Role == ManagRRole.Analyst)
+            if (user.Role == ManagRRole.Analyst)
             {
                 claims.Add(new Claim(JwtClaimTypes.Role, "analyst"));
                 claims.Add(new Claim(JwtClaimTypes.Role, "leader"));
@@ -50,7 +52,8 @@ namespace UserAuthentication
             {
                 claims.Add(new Claim(JwtClaimTypes.Role, "user"));
                 claims.Add(new Claim(JwtClaimTypes.Role, "spectator"));
-            } else
+            }
+            else
             {
                 claims.Add(new Claim(JwtClaimTypes.Role, "spectator"));
             }

@@ -9,5 +9,7 @@ namespace UserAuthentication.Models.ViewModels
     public class ManagRUser : IdentityUser
     {
         public ManagRRole Role { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 }
