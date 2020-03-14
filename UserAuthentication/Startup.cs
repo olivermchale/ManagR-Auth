@@ -92,6 +92,20 @@ namespace UserAuthentication
                 .AddProfileService<ManagRProfileService>()
                 .AddDeveloperSigningCredential();
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ManagRAppServices",
+                builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200",
+                                        "http://localhost:4200",
+                                        "http://localhost:4200/register")
+                                        .AllowAnyOrigin()
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader();
+                });
+            });
+
             services.AddHttpClient();
             
             services.AddControllers();
@@ -110,6 +124,8 @@ namespace UserAuthentication
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseCors("ManagRAppServices");
 
             app.UseIdentityServer();
 
