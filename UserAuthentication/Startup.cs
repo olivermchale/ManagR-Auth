@@ -12,7 +12,9 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using UserAuthentication.Data;
+using UserAuthentication.Interfaces;
 using UserAuthentication.Models.ViewModels;
+using UserAuthentication.Services.Users;
 
 namespace UserAuthentication
 {
@@ -91,6 +93,8 @@ namespace UserAuthentication
                 .AddAspNetIdentity<ManagRUser>()
                 .AddProfileService<ManagRProfileService>()
                 .AddDeveloperSigningCredential();
+
+            services.AddScoped<IUsersService, UsersService>();
 
             services.AddCors(options =>
             {
