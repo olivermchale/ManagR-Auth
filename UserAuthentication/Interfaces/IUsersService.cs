@@ -9,5 +9,9 @@ namespace UserAuthentication.Interfaces
     public interface IUsersService
     {
         Task<List<UserVm>> SearchUsers(string searchQuery);
+
+        public Task<string> GetUserName(Guid id);
+
+        public Task<UserDetailVm> GetUser(Guid id);
     }
 }

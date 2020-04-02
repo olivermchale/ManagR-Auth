@@ -22,5 +22,21 @@ namespace UserAuthentication.Controllers
             var users = await _usersService.SearchUsers(searchQuery);
             return Ok(users);
         }
+
+        public async Task<IActionResult> GetUsername(Guid id)
+        {
+            var username = await _usersService.GetUserName(id);
+            return Ok(username);
+        }
+
+        public async Task<IActionResult> GetUser(Guid id)
+        {
+            var user = await _usersService.GetUser(id);
+            if (user != null)
+            {
+                return Ok(user);
+            }
+            return new StatusCodeResult(500);
+        }
     }
 }

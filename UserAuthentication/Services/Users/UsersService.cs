@@ -31,5 +31,51 @@ namespace UserAuthentication.Services.Users
 
             return users;
         }
+
+        public async Task<string> GetUserName(Guid id)
+        {
+            try
+            {
+                var user = await _userManager.Users
+                    .Where(u => u.Id == id.ToString())
+                    .Select(n => n.FirstName + ' ' + n.LastName)
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    return user;
+                }
+            }
+            catch(Exception e)
+            {
+                //exception getting users name
+            }
+            return null;
+        }
+
+        public async Task<UserDetailVm> GetUser(Guid id)
+        {
+            try
+            {
+                var user = await _userManager.Users
+                    .Where(u => u.Id == id.ToString())
+                    .Select(v => new UserDetailVm
+                    {
+                        Email = v.Email,
+                        FirstName = v.FirstName,
+                        LastName = v.LastName,
+                        Role = v.Role
+                    }).FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    return user;
+                }
+            }
+            catch (Exception e) {
+                // exception getting user
+            }
+            return null;
+        }
     }
 }
