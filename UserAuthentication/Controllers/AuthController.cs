@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -11,6 +12,7 @@ using UserAuthentication.Models.ViewModels;
 
 namespace UserAuthentication.Controllers
 {
+    [EnableCors("ManagRAppServices")]
     public class AuthController : Controller
     {
         private readonly UserManager<ManagRUser> _userManager;
@@ -57,6 +59,8 @@ namespace UserAuthentication.Controllers
                 UserName = registerInfo.Username,
                 Role = registerInfo.Role,
                 Email = registerInfo.Email,
+                FirstName = registerInfo.FirstName,
+                LastName = registerInfo.LastName
             };
 
             var result = await _userManager.CreateAsync(user, registerInfo.Password);

@@ -12,7 +12,9 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using UserAuthentication.Data;
+using UserAuthentication.Interfaces;
 using UserAuthentication.Models.ViewModels;
+using UserAuthentication.Services.Users;
 
 namespace UserAuthentication
 {
@@ -92,6 +94,22 @@ namespace UserAuthentication
                 .AddProfileService<ManagRProfileService>()
                 .AddDeveloperSigningCredential();
 
+            services.AddScoped<IUsersService, UsersService>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("ManagRAppServices",
+                builder =>
+                {
+                    builder.WithOrigins("https://localhost:4200",
+                                        "http://localhost:4200",
+                                        "http://localhost:4200/register")
+                                        .AllowAnyOrigin()
+                                        .AllowAnyMethod()
+                                        .AllowAnyHeader();
+                });
+            });
+
             services.AddHttpClient();
             
             services.AddControllers();
@@ -110,6 +128,8 @@ namespace UserAuthentication
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseCors("ManagRAppServices");
 
             app.UseIdentityServer();
 
