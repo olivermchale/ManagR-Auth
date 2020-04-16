@@ -1,4 +1,5 @@
 ﻿using IdentityModel.Client;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,19 @@ namespace UserAuthentication
     public class IDAuthService : IIDAuthService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        public IDAuthService(IHttpClientFactory httpClientFactory)
+        private IConfiguration _configuration;
+        public IDAuthService(IHttpClientFactory httpClientFactory, IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
+            _configuration = configuration;
         }
 
         public async Task<string> Authenticate(LoginVm loginInfo)
         {
             var client = _httpClientFactory.CreateClient();
 
-            var discovery = await client.GetDiscoveryDocumentAsync("https://localhost:5001/");
+            var url = _configuration.GetValue<string>("IDConfigUrl");
+            var discovery = await client.GetDiscoveryDocumentAsync(url);
 
             var tokenResponse = await client.RequestPasswordTokenAsync(new PasswordTokenRequest
             {
