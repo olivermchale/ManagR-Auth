@@ -74,6 +74,7 @@ namespace UserAuthentication.Controllers
 
         [HttpGet]
         [Authorize]
+        // Dummy method to test auth...
         public async Task<IActionResult> Test()
         {
             return Ok(2);

@@ -32,10 +32,12 @@ namespace UserAuthentication
         public void ConfigureServices(IServiceCollection services)
         {
 
+            // Add base Db context
             services.AddDbContext<UserAuthenticationDb>(options =>
             {
                 options.UseSqlServer(_configuration.GetConnectionString("UserAuthenticationDb"));
             });
+            // Add identity (core), choose some very loose password settings
             IdentityBuilder builder = services.AddIdentityCore<ManagRUser>(options =>
             {
                 options.Password.RequireDigit = false;
@@ -45,9 +47,11 @@ namespace UserAuthentication
                 options.Password.RequireLowercase = false;
             });
 
+            // Add the overrides to the profile service
             services.AddScoped<IIDAuthService, IDAuthService>();
             services.AddTransient<IProfileService, ManagRProfileService>();
 
+            // Create a builder for Identity
             builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
             builder.AddEntityFrameworkStores<UserAuthenticationDb>();
             builder.AddRoleValidator<RoleValidator<IdentityRole>>();
@@ -67,6 +71,7 @@ namespace UserAuthentication
 
                 config.Events = new JwtBearerEvents()
                 {
+                    // Always get token from request
                     OnMessageReceived = context =>
                     {
                         if (context.Request.Query.ContainsKey("access_token"))
@@ -78,6 +83,7 @@ namespace UserAuthentication
                     }
                 };
 
+                // Validation params
                 config.TokenValidationParameters = new TokenValidationParameters()
                 {
                     ClockSkew = TimeSpan.Zero,
@@ -87,6 +93,8 @@ namespace UserAuthentication
                 };
             });
 
+            // After identity has been added, add identity server using in memory resources and  
+            // And a custom user and user profile service
             services.AddIdentityServer()
                 .AddInMemoryApiResources(IdentityServerConfig.GetApis())
                 .AddInMemoryClients(IdentityServerConfig.GetClients())
@@ -96,6 +104,7 @@ namespace UserAuthentication
 
             services.AddScoped<IUsersService, UsersService>();
 
+            // Add cors to prevent CORS attacks
             services.AddCors(options =>
             {
                 options.AddPolicy("ManagRAppServices",

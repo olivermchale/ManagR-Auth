@@ -13,6 +13,7 @@ using UserAuthentication.Models.ViewModels;
 
 namespace UserAuthentication
 {
+    // Override default profile service to add claims to our authentication
     public class ManagRProfileService : IProfileService
     {
         private readonly IUserClaimsPrincipalFactory<ManagRUser> _claimsFactory;

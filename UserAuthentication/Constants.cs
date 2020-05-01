@@ -1,6 +1,5 @@
 ﻿namespace UserAuthentication
 {
-    // todo: refactor to config/azure appsettings overwrite
     public static class Constants
     {
         public const string Audience = "localhost:44359";
